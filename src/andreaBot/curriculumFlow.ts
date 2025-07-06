@@ -1,7 +1,7 @@
 import { join } from 'path'
 import {  addKeyword } from '@builderbot/bot'
-import { welcomeFlow } from '~/app';
 import { commonMessag } from '~/common/CommonMessages';
+import { welcomeFlow } from './welcomeFlow';
 
 
 
@@ -19,7 +19,6 @@ import { commonMessag } from '~/common/CommonMessages';
         { capture: true },
         async (ctx, { fallBack,endFlow, gotoFlow}) => {
             const validOptions = ["1","2"];
-
             if(ctx.body === "2"){
                 return endFlow(commonMessag.endMessage);
             }else if(ctx.body === "1"){

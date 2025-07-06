@@ -1,35 +1,10 @@
-import { join } from 'path'
+
 import { createBot, createProvider, createFlow, addKeyword, utils } from '@builderbot/bot'
 import { MongoAdapter as Database } from '@builderbot/database-mongo'
 import { BaileysProvider as Provider } from '@builderbot/provider-baileys'
-import { curriculumFlow } from './andreaBot/curriculumFlow'
-import { commonMessag } from './common/CommonMessages'
+import { welcomeFlow } from './andreaBot/welcomeFlow'
 
 const PORT = process.env.PORT ?? 3008
-
-export const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
-    .addAnswer(`*¡Hola! 👋*, Gracias por contactarme. `)
-    .addAnswer(
-        [
-            'Por favor, elige una opción:',
-            '1️⃣ 📄 Currículum - Te comparto mi CV actualizado.',
-            '2️⃣ 🤖 Demo del Tremec Bot - Te muestro cómo funciona.',
-            '3️⃣ 🚪 Salir - Finalizar conversación.',
-            ' ',
-            'Espero tu respuesta. ¡Saludos! 😊'
-        ].join('\n'),
-        { capture: true },
-        async (ctx, { fallBack , endFlow}) => {
-            const options = ["1", "2", "3", "4"];
-            if(ctx.body === "3"){
-                return endFlow(commonMessag.endMessage);
-            }
-            if (!options.includes(ctx.body)){
-                return fallBack(commonMessag.selectOption(ctx.name))
-            }
-        },
-        [curriculumFlow]
-    )
 
 
 const main = async () => {
