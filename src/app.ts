@@ -13,16 +13,17 @@ export const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'
         [
             'Por favor, elige una opción:',
             '1️⃣ 📄 Currículum - Te comparto mi CV actualizado.',
-            '2️⃣ 📲 Contacto - Mis datos directos para comunicación.',
-            '3️⃣ 🤖 Demo del Tremec Bot - Te muestro cómo funciona.',
-            '4️⃣ 🚪 Salir - Finalizar conversación.',
+            '2️⃣ 🤖 Demo del Tremec Bot - Te muestro cómo funciona.',
+            '3️⃣ 🚪 Salir - Finalizar conversación.',
             ' ',
             'Espero tu respuesta. ¡Saludos! 😊'
         ].join('\n'),
         { capture: true },
-        async (ctx, { fallBack }) => {
-            console.log(ctx);
+        async (ctx, { fallBack , endFlow}) => {
             const options = ["1", "2", "3", "4"];
+            if(ctx.body === "3"){
+                return endFlow(commonMessag.endMessage);
+            }
             if (!options.includes(ctx.body)){
                 return fallBack(commonMessag.selectOption(ctx.name))
             }
