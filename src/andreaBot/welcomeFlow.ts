@@ -1,6 +1,7 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { curriculumFlow } from "./curriculumFlow";
 import { commonMessag } from "~/common/CommonMessages";
+import { demoBotFlow} from './demoBotFlow';
 
 export const welcomeFlow = addKeyword(EVENTS.WELCOME || EVENTS.VOICE_NOTE )
     .addAnswer(`*¡Hola! 👋*, Gracias por contactarme. `)
@@ -16,7 +17,7 @@ export const welcomeFlow = addKeyword(EVENTS.WELCOME || EVENTS.VOICE_NOTE )
         ].join('\n'),
         { capture: true },
         async (ctx, { fallBack ,provider ,endFlow}) => {
-            const options = ["1", "2", "3", "4"];
+            const options = ["1", "2", "3"];
             if(ctx.body === "3"){
                 return endFlow(commonMessag.endMessage);
             }
@@ -24,5 +25,5 @@ export const welcomeFlow = addKeyword(EVENTS.WELCOME || EVENTS.VOICE_NOTE )
                 return fallBack(commonMessag.selectOption(ctx.name))
             }
         },
-        [curriculumFlow]
+        [curriculumFlow, demoBotFlow]
     )

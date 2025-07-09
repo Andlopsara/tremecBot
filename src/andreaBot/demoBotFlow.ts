@@ -45,17 +45,19 @@ const Productos = addKeyword(["6"])
   );
 
 //La opcion 5 es para la agendar una cita tecnica
-const Cita= addKeyword(["5"]) 
+const Cita = addKeyword(["5"])
   .addAnswer("🛠️ *Agendar Cita Técnica para Asesoría*")
-  .addAnswer("¿Sobre qué tema necesitas la asesoría técnica?", { capture: true }, async (ctx, { state }) => {
+  .addAnswer("¿Sobre qué tema necesitas la asesoría técnica?", { capture: true }, async (ctx, { state, flowDynamic }) => {
     await state.update({ temaAsesoria: ctx.body });
+
+    await flowDynamic("¿Qué día y hora te gustaría agendar la cita? (Ejemplo: 12 de julio a las 10:00 AM)");
   })
-  .addAnswer("¿Qué día y hora te gustaría agendar la cita? (Ejemplo: 12 de julio a las 10:00 AM)", { capture: true }, async (ctx, { state, flowDynamic }) => {
+  .addAnswer("", { capture: true }, async (ctx, { state, flowDynamic }) => {
     const fechaHora = ctx.body;
     const datos = await state.getMyState();
-    console.log(`📅 Cita técnica solicitada:
-    Tema: ${datos.temaAsesoria}
-    Fecha y hora: ${fechaHora}`);
+
+    console.log(`📅 Cita técnica solicitada:\nTema: ${datos.temaAsesoria}\nFecha y hora: ${fechaHora}`);
+
     await flowDynamic([
       `✅ Tu cita técnica ha sido registrada.`,
       `📝 *Tema:* ${datos.temaAsesoria}`,
@@ -67,17 +69,18 @@ const Cita= addKeyword(["5"])
     ].join('\n'));
   })
   .addAnswer("", { capture: true }, async (ctx, { endFlow, gotoFlow, fallBack }) => {
-    const opcion = ctx.body;
+    const opcion = ctx.body.trim();
     const validOptions = ["1", "2"];
 
     if (opcion === "2") {
-      return endFlow(commonMessag.endMessage);
+      return endFlow("✅ ¡Gracias por usar el bot! Hasta pronto.");
     } else if (opcion === "1") {
       return gotoFlow(welcomeFlow);
     } else {
-      return fallBack(commonMessag.selectOption(ctx.name));
+      return fallBack("⚠️ Por favor, elige una opción válida:\n1️⃣ Regresar al menú\n2️⃣ Finalizar conversación");
     }
   });
+
 
 //La opcion 4 es para la informacion de la empresa 
 const Informacion= addKeyword(["4"]) 
@@ -230,34 +233,37 @@ const Objetivo = addKeyword (["2"])
 //La opción 1 es el regrso al menu
 //.........
 // Menu del demoBot
-    export const demoBotFlow = addKeyword("2")//numero de opción que el usuario puede elegir
-    .addAnswer("🤖 Demo del Tremec Bot - Te muestro cómo funciona.")
-    .addAnswer(`👩🏽‍💻 ¡Hola! Soy Dana la asistente virtual de Tremec, por el momento soy un demo. ¿En qué puedo ayudarte hoy?`)
-    .addAnswer(
-        [
-            "Elige una opción:",
-            "1️⃣ Regresar al menú principal 🏠",
-            "2️⃣ Objetivo del Bot",
-            "3️⃣ Recursos Humanos 👤",
-            "4️⃣ Información técnica 📑",
-            "4️⃣ Agenda una cita técnica 📑",
-            "4️⃣ Conoce nuestros productos",
-            "5️⃣ Salir 🚪",
-        ].join('\n'),
-        { capture: true },
-        async (ctx, { fallBack,endFlow, gotoFlow}) => {
-            const validOptions = ["1","2","3","4","5"];
-            if(ctx.body === "5"){
-                return endFlow(commonMessag.endMessage);
-            }else if(ctx.body === "1"){
-                return gotoFlow(welcomeFlow);
-            }
+export const demoBotFlow = addKeyword("2")
+  .addAnswer("🤖 Demo del Tremec Bot - Te muestro cómo funciona.")
+  .addAnswer(`👩🏽‍💻 ¡Hola! Soy Dana, la asistente virtual de Tremec. ¿En qué puedo ayudarte hoy?`)
+  .addAnswer(
+    [
+      "Elige una opción:",
+      "1️⃣ Regresar al menú principal 🏠",
+      "2️⃣ Objetivo del Bot",
+      "3️⃣ Recursos Humanos 👤",
+      "4️⃣ Información técnica 📑",
+      "5️⃣ Agenda una cita técnica 📅",
+      "6️⃣ Conoce nuestros productos 📦",
+      "7️⃣ Salir 🚪",
+    ].join('\n'),
+    { capture: true },
+    async (ctx, { fallBack, endFlow, gotoFlow }) => {
+      const option = ctx.body;
+      const validOptions = ["1", "2", "3", "4", "5", "6", "7"];
 
-            if (!validOptions.includes(ctx.body)) {
-                 return fallBack(commonMessag.selectOption(ctx.name));
-            }
-        },
-        [
-            Objetivo, Recursos, Informacion, Cita, Productos
-        ]
-    );
+      if (!validOptions.includes(option)) {
+        return fallBack(commonMessag.selectOption(ctx.name));
+      }
+      if (option === "7") return endFlow(commonMessag.endMessage);
+      if (option === "1") return gotoFlow(welcomeFlow);
+      if (option === "2") return gotoFlow(Objetivo);
+      if (option === "3") return gotoFlow(Recursos);
+      if (option === "4") return gotoFlow(Informacion);
+      if (option === "5") return gotoFlow(Cita);
+      if (option === "6") return gotoFlow(Productos);
+    },
+    [
+        Objetivo, Recursos, Informacion, Cita, Productos
+    ]
+);
