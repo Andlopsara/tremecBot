@@ -4,6 +4,80 @@ import { commonMessag } from '~/common/CommonMessages';//Para mensajes comunes
 import { welcomeFlow } from './welcomeFlow'; //Bienvenida al usuario 
 import { uptime } from 'os';
 
+//La opcion 6 es para mostrar los productos de la empresa
+const Productos = addKeyword(["6"])
+  .addAnswer(
+    "📦 *Productos de Tremec*",
+  )
+  .addAnswer(
+    [
+      "Aquí tienes algunos catálogos y recursos disponibles:",
+      "",
+      "🔗 *Catálogo de alto rendimiento (PDF)*",
+      "https://tremec.com/wp-content/uploads/2023/09/TREMEC_Performance.pdf",
+      "",
+      "📘 *Manual técnico TR-3450 en español*",
+      "https://www.engranesimportados.com/catalogos/TR3450_ServiceManual_Spanish.pdf",
+      "",
+      "🌐 *Sitio oficial - Literatura técnica*",
+      "https://tremec.com/aftermarket/resources/product-literature/",
+    ].join('\n')
+  )
+  .addAnswer(
+    [
+      "¿Te puedo asistir con algo más?",
+      "1️⃣ Regresar al menú",
+      "2️⃣ Finalizar conversación"
+    ].join('\n'),
+    { capture: true },
+    async (ctx, { fallBack, endFlow, gotoFlow }) => {
+      const opcion = ctx.body;
+      const validOptions = ["1", "2"];
+
+      if (opcion === "2") {
+        return endFlow(commonMessag.endMessage);
+      } else if (opcion === "1") {
+        return gotoFlow(welcomeFlow);
+      } else {
+        return fallBack(commonMessag.selectOption(ctx.name));
+      }
+    }
+  );
+
+//La opcion 5 es para la agendar una cita tecnica
+const Cita= addKeyword(["5"]) 
+  .addAnswer("🛠️ *Agendar Cita Técnica para Asesoría*")
+  .addAnswer("¿Sobre qué tema necesitas la asesoría técnica?", { capture: true }, async (ctx, { state }) => {
+    await state.update({ temaAsesoria: ctx.body });
+  })
+  .addAnswer("¿Qué día y hora te gustaría agendar la cita? (Ejemplo: 12 de julio a las 10:00 AM)", { capture: true }, async (ctx, { state, flowDynamic }) => {
+    const fechaHora = ctx.body;
+    const datos = await state.getMyState();
+    console.log(`📅 Cita técnica solicitada:
+    Tema: ${datos.temaAsesoria}
+    Fecha y hora: ${fechaHora}`);
+    await flowDynamic([
+      `✅ Tu cita técnica ha sido registrada.`,
+      `📝 *Tema:* ${datos.temaAsesoria}`,
+      `📅 *Fecha y hora:* ${fechaHora}`,
+      "",
+      "¿Te puedo asistir con algo más?",
+      "1️⃣ Regresar al menú",
+      "2️⃣ Finalizar conversación"
+    ].join('\n'));
+  })
+  .addAnswer("", { capture: true }, async (ctx, { endFlow, gotoFlow, fallBack }) => {
+    const opcion = ctx.body;
+    const validOptions = ["1", "2"];
+
+    if (opcion === "2") {
+      return endFlow(commonMessag.endMessage);
+    } else if (opcion === "1") {
+      return gotoFlow(welcomeFlow);
+    } else {
+      return fallBack(commonMessag.selectOption(ctx.name));
+    }
+  });
 
 //La opcion 4 es para la informacion de la empresa 
 const Informacion= addKeyword(["4"]) 
@@ -165,7 +239,9 @@ const Objetivo = addKeyword (["2"])
             "1️⃣ Regresar al menú principal 🏠",
             "2️⃣ Objetivo del Bot",
             "3️⃣ Recursos Humanos 👤",
-            "4️⃣ Información Técnica 📑",
+            "4️⃣ Información técnica 📑",
+            "4️⃣ Agenda una cita técnica 📑",
+            "4️⃣ Conoce nuestros productos",
             "5️⃣ Salir 🚪",
         ].join('\n'),
         { capture: true },
@@ -182,6 +258,6 @@ const Objetivo = addKeyword (["2"])
             }
         },
         [
-            Objetivo, Recursos, Informacion
+            Objetivo, Recursos, Informacion, Cita, Productos
         ]
     );
