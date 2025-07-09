@@ -235,7 +235,7 @@ const Objetivo = addKeyword (["2"])
 // Menu del demoBot
 export const demoBotFlow = addKeyword("2")
   .addAnswer("🤖 Demo del Tremec Bot - Te muestro cómo funciona.")
-  .addAnswer(`👩🏽‍💻 ¡Hola! Soy Dana, la asistente virtual de Tremec. ¿En qué puedo ayudarte hoy?`)
+  .addAnswer(`👩🏽‍💻 ¡Hola! Soy Sarah, la asistente virtual de Tremec. ¿En qué puedo ayudarte hoy?`)
   .addAnswer(
     [
       "Elige una opción:",
