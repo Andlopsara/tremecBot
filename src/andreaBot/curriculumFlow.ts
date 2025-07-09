@@ -1,7 +1,7 @@
 import { join } from 'path'
 import {  addKeyword } from '@builderbot/bot'
-import { commonMessag } from '~/common/CommonMessages';
-import { welcomeFlow } from './welcomeFlow';
+import { commonMessag } from '~/common/CommonMessages'; //Para mensajes comunes
+import { welcomeFlow } from './welcomeFlow';//Bienvenida al usuario 
 
 
 
