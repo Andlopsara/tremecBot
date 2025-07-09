@@ -4,7 +4,7 @@ import { MongoAdapter as Database } from '@builderbot/database-mongo'
 import { BaileysProvider as Provider } from '@builderbot/provider-baileys'
 import { welcomeFlow } from './andreaBot/welcomeFlow'
 
-const PORT = process.env.PORT ?? 3008
+const PORT = process.env.PORT ?? 3009
 
 
 const main = async () => {
